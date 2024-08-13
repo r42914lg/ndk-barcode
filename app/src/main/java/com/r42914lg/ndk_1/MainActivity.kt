@@ -1,9 +1,10 @@
 package com.r42914lg.ndk_1
 
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.r42914lg.ndk_1.databinding.ActivityMainBinding
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,19 +15,22 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Example of a call to a native method
-        binding.sampleText.text = stringFromJNI()
+        initUi()
     }
 
-    /**
-     * A native method that is implemented by the 'ndk_1' native library,
-     * which is packaged with this application.
-     */
-    external fun stringFromJNI(): String
+    private fun initUi() = with(binding) {
+        bBarcode.setOnClickListener {
+            val textOfInterest = ("*" + etBarcode.text.toString().uppercase(Locale.ROOT)) + "*"
+            val width = resources.displayMetrics.widthPixels
+            val bitmapWip = Bitmap.createBitmap(width - 20, 100, Bitmap.Config.ALPHA_8)
+            drawBarcode(textOfInterest, bitmapWip)
+            ivBarcode.setImageBitmap(bitmapWip)
+        }
+    }
+
+    private external fun drawBarcode(text: String, bitmap: Bitmap?)
 
     companion object {
-        // Used to load the 'ndk_1' library on application startup.
         init {
             System.loadLibrary("ndk_1")
         }

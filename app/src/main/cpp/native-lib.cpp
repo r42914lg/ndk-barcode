@@ -103,7 +103,7 @@ const char * getSequence(char charwewant) {
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_r42914lg_ndk_11_MainActivity_drawBarcode(
+Java_com_r42914lg_ndk_11_BarCodeWrapper_drawBarcode(
         JNIEnv * env,
         jobject  obj,
         jstring dataToEncode,

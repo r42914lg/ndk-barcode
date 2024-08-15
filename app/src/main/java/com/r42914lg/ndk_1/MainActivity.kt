@@ -1,6 +1,5 @@
 package com.r42914lg.ndk_1
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,23 +18,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    InputScreen()
+                    InputScreen(resources.displayMetrics.widthPixels)
                 }
             }
         }
     }
-
-//    private fun initUi() = with(binding) {
-//        bBarcode.setOnClickListener {
-//            val textOfInterest = ("*" + etBarcode.text.toString().uppercase(Locale.ROOT)) + "*"
-//            val width = resources.displayMetrics.widthPixels
-//            val bitmapWip = Bitmap.createBitmap(width - 20, 100, Bitmap.Config.ALPHA_8)
-//            drawBarcode(textOfInterest, bitmapWip)
-//            ivBarcode.setImageBitmap(bitmapWip)
-//        }
-//    }
-
-    private external fun drawBarcode(text: String, bitmap: Bitmap?)
 
     companion object {
         init {

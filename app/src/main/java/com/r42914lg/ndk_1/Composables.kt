@@ -2,6 +2,7 @@ package com.r42914lg.ndk_1
 
 import android.app.Activity
 import android.os.Build
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,12 +17,15 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -31,8 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import kotlin.random.Random
-import kotlin.random.nextInt
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
@@ -96,13 +99,19 @@ fun NdkTheme(
 }
 
 @Composable
-fun InputScreen() {
+fun InputScreen(
+    screenWidth: Int,
+    maxChars: Int = 20,
+    viewModel: BarCodeViewModel = viewModel { BarCodeViewModel(screenWidth) }
+) {
+    val bitmapState by viewModel.bitmap.collectAsState()
     var textState by remember { mutableStateOf("12345") }
     Column(modifier = Modifier.fillMaxSize()) {
         OutlinedTextField(
             value = textState,
+            singleLine = true,
             onValueChange = {
-                textState = it
+                textState = it.take(maxChars)
             },
             label = {
                 Text(text = "Enter text")
@@ -110,10 +119,16 @@ fun InputScreen() {
         )
         Button(
             onClick = {
-
+                viewModel.produce(textState)
             }
         ) {
             Text(text = "Produce bar-code")
+        }
+        bitmapState?.let {
+            Image(
+                painter = BitmapPainter(it.asImageBitmap()),
+                contentDescription = ""
+            )
         }
     }
 }
@@ -121,5 +136,5 @@ fun InputScreen() {
 @Preview(showBackground = true)
 @Composable
 fun InputScreenPreview() {
-    InputScreen()
+    InputScreen(1024)
 }
